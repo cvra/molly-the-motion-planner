@@ -7,7 +7,7 @@ class Vec2D(object):
 
     EPSILON = 0.0001
 
-    def __init__(self, x, y):
+    def __init__(self, x=0.0, y=0.0):
         self.pos_x = x
         self.pos_y = y
 

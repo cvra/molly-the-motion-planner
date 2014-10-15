@@ -28,8 +28,12 @@ class Vec2D(object):
         length = self.length()
         return self * (1/length)
 
-    def rotate(self, angle, center=Vec2D(0.0, 0.0)):
+    def rotate(self, angle, center=None):
         "rotate self by angle radians around center"
+
+        if center is None:
+            center = Vec2D()
+
         centered = self - center
 
         cosine = math.cos(angle)

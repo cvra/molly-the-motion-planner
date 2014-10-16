@@ -1,5 +1,5 @@
 language: python
-compiler:
+python:
     - "2.7"
     - "3.2"
     - "3.3"

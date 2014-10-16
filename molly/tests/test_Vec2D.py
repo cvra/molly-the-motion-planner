@@ -92,8 +92,8 @@ class Vec2DTest(unittest.TestCase):
 
         unit = vec.normalized()
 
-        self.assertAlmostEquals(vec.pos_x, unit.pos_x)
-        self.assertAlmostEquals(vec.pos_y, unit.pos_y)
+        self.assertAlmostEqual(vec.pos_x, unit.pos_x)
+        self.assertAlmostEqual(vec.pos_y, unit.pos_y)
 
     def test_rotate_around_origin(self):
         "rotate around origin"

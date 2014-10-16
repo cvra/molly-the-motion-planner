@@ -1,0 +1,12 @@
+language: python
+compiler:
+    - "2.7"
+    - "3.2"
+    - "3.3"
+
+before_install:
+
+before_script:
+
+script:
+    - python -m unittest discover

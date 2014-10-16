@@ -188,5 +188,32 @@ class Vec2DTest(unittest.TestCase):
         self.assertTrue(vec == approx)
         self.assertFalse(vec != approx)
 
+    def test_positive_orientation(self):
+        "test that orientation returns postive value for positively oriented \
+                points"
+        vec1 = Vec2D(0, 0)
+        vec2 = Vec2D(1, 0)
+        vec3 = Vec2D(0, 1)
+
+        self.assertTrue(orientation(vec1, vec2, vec3) > 0)
+
+    def test_negative_orientation(self):
+        "test that orientation returns postive value for positively oriented \
+                points"
+        vec1 = Vec2D(0, 0)
+        vec2 = Vec2D(0, 1)
+        vec3 = Vec2D(1, 0)
+
+        self.assertTrue(orientation(vec1, vec2, vec3) < 0)
+
+    def test_orientation_colinear(self):
+        "test that orientation returns (almost) zero for colinear points"
+
+        vec1 = Vec2D(0, 0)
+        vec2 = Vec2D(1, 0)
+        vec3 = Vec2D(2, 0)
+
+        self.assertAlmostEqual(0, orientation(vec1, vec2, vec3))
+
 if __name__ == "__main__":
     unittest.main()

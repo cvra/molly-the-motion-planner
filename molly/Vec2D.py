@@ -68,10 +68,10 @@ class Vec2D(object):
     def __ne__(self, other):
         return not self == other
 
-def orientation(vec1, vec2, vec3):
-    "return positive number if the points are mathematically \
-     positively oriented negative number for negative orientation \
-     and zero for colinear points"
-    vec12 = vec2 - vec1
-    vec23 = vec3 - vec2
-    return vec12.cross(vec23)
+    def orientation(vec1, vec2, vec3):
+        "return positive number if the points are mathematically \
+         positively oriented negative number for negative orientation \
+         and zero for colinear points"
+        vec12 = vec2 - vec1
+        vec23 = vec3 - vec2
+        return vec12.cross(vec23)

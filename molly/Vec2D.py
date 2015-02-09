@@ -68,6 +68,7 @@ class Vec2D(object):
     def __ne__(self, other):
         return not self == other
 
+    @staticmethod
     def orientation(vec1, vec2, vec3):
         "return positive number if the points are mathematically \
          positively oriented negative number for negative orientation \

@@ -80,3 +80,18 @@ class Tangent(object):
 
     def __ne__(self, other):
         return not self == other
+
+    def __add__(self, vec):
+        "translate self by vec"
+        new_start_pos = self.start_pos + vec
+        new_start_circle = self.start_circle + vec
+        new_end_pos = self.end_pos + vec
+        new_end_circle = self.end_circle + vec
+
+        return Tangent(new_start_pos,
+                       new_start_circle,
+                       self.start_orient,
+                       new_end_pos,
+                       new_end_circle,
+                       self.end_orient)
+

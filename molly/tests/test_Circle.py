@@ -269,6 +269,8 @@ class CircleTest(unittest.TestCase):
 
         self.assertTrue(valid)
 
+    # polygon tangents tested in unittest for polygon class
+
 
 if __name__ == "__main__":
     unittest.main()

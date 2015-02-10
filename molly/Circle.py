@@ -38,6 +38,10 @@ class Circle(object):
 
         return tans
 
+    def tangent_polygon(self, poly):
+        "tangent between self and polygon"
+        return poly.tangent_circle(self)
+
     def _innertangents(self, other):
         "helper function: compute inner pair of tangents"
         return self._circle_tangents(other, True)

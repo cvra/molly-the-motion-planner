@@ -271,6 +271,14 @@ class CircleTest(unittest.TestCase):
 
     # polygon tangents tested in unittest for polygon class
 
+    def test_tangent_vector(self):
+        "vector tangent to unitcircle"
+
+        circ = Circle()
+        pos = Vec2D(1, 0)
+
+        self.assertTrue(circ.tangent_vector(pos, 1) == Vec2D(0, 1))
+
 
 if __name__ == "__main__":
     unittest.main()

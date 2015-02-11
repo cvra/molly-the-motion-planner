@@ -30,7 +30,7 @@ class Circle(object):
 
         tans = self._outertangents(circle)
 
-        if not self.intersects(circle):
+        if not self.intersects(circle) and circle.radius > Vec2D.EPSILON:
             inner = self._innertangents(circle)
 
             for tan in inner:
@@ -118,6 +118,36 @@ class Circle(object):
             if res >= 0 and res <= 1:
                 return True
         return False
+
+    def tangent_intersection_point(self, tangent):
+        "return whether self intersects with tangent"
+
+        if self == tangent.start_circle or self == tangent.end_circle:
+            return False
+
+        direction = tangent.end_pos - tangent.start_pos
+        diff = tangent.start_pos - self.pos
+
+        param1 = direction.dot(direction)
+        param2 = 2 * direction.dot(diff)
+        param3 = diff.dot(diff) - (self.radius * self.radius)
+
+        points = []
+
+        for res in Circle.solve_quadratic(param1, param2, param3):
+            if res >= 0 and res <= 1:
+                points.append(tangent.start_pos + direction * res)
+
+        return points
+
+    def tangent_vector(self, point, orientation):
+        "tangent vector to self at point with orientation"
+        vec = (point - self.pos).normalized()
+
+        if orientation < 0:
+            return Vec2D(vec.pos_y, -vec.pos_x)
+        else:
+            return Vec2D(-vec.pos_y, vec.pos_x)
 
     def __str__(self):
         "string representation for debugging"

@@ -52,8 +52,14 @@ class Vec2D(object):
         vec1 = self.normalized()
         vec2 = other.normalized()
 
-        cross_prod = vec1.cross(vec2) # cos(angle)
-        dot_prod = vec1.dot(vec2) # sin(angle)
+        cross_prod = vec1.cross(vec2) # sin(angle)
+        dot_prod = vec1.dot(vec2) # cos(angle)
+
+        if dot_prod < -1.0:
+            dot_prod = -1.0
+
+        if dot_prod > 1.0:
+            dot_prod = 1.0
 
         if cross_prod > 0:
             angle = acos(dot_prod)

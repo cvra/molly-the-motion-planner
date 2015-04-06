@@ -110,10 +110,13 @@ def get_start_circles(start_pos, start_heading, radius):
 
 def all_tangents(circles, polygons):
     "return all valid tangents for circles and polygons"
+    circle_tans = all_tangents_poly_helper([], [], polygons)
 
-    circle_tans = all_tangents_circle_helper([], [], circles)
+    return all_tangents_circle_helper(circle_tans, polygons, circles)
 
-    return all_tangents_poly_helper(circle_tans, circles, polygons)
+    #circle_tans = all_tangents_circle_helper([], [], circles)
+
+    #return all_tangents_poly_helper(circle_tans, circles, polygons)
 
 def all_tangents_circle_helper(tan_acc, checked, circles):
     "helper function for all_tangents"
@@ -122,7 +125,7 @@ def all_tangents_circle_helper(tan_acc, checked, circles):
 
     for circle in circles:
 
-        old_tans_filtered = [tan for tan in tan_acc
+        old_tans_filtered = [tan for tan in res
                              if not circle.intersects_tangent(tan)]
 
         new_candidates = [tan for old in checked
@@ -144,7 +147,7 @@ def all_tangents_poly_helper(tan_acc, checked, polys):
 
     for poly in polys:
 
-        old_tans_filtered = [tan for tan in tan_acc
+        old_tans_filtered = [tan for tan in res
                              if not poly.intersects_tangent(tan)]
 
         new_candidates = [tan for old in checked

@@ -8,7 +8,7 @@ args = dict(
         description='simple path planner',
         packages=['molly'],
         install_requires=['heapdict'],
-        author='Pius von Däniken'
+        author='Pius von Daeniken'
         url='https://github.com/cvra/molly-the-motion-planner'
 )
 

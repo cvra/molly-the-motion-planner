@@ -42,7 +42,7 @@ def main():
     poly1 = Polygon([corner1, corner2], [side1, side2]) + Vec2D(0.15, 0.3)
 
     circs = [obs1]
-    polys = [STAIRS, poly1]
+    polys = [poly1]
 
     paused = False
     while True:

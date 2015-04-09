@@ -215,5 +215,13 @@ class Vec2DTest(unittest.TestCase):
 
         self.assertAlmostEqual(0, Vec2D.orientation(vec1, vec2, vec3))
 
+    def test_orientangle_simple(self):
+
+        vec1 = Vec2D(1, 0)
+        vec2 = Vec2D(math.sqrt(2.0)/2, math.sqrt(2.0)/2)
+
+        self.assertAlmostEqual(vec1.oriented_angle(vec2), 0.25 * math.pi)
+        self.assertAlmostEqual(vec2.oriented_angle(vec1), 1.75 * math.pi)
+
 if __name__ == "__main__":
     unittest.main()

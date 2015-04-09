@@ -1,6 +1,6 @@
 "basic 2D vector geometry"
 
-import math
+from math import acos, sqrt, sin, cos, pi
 
 class Vec2D(object):
     " Simple 2D vector class for euclidean geometry "
@@ -21,7 +21,7 @@ class Vec2D(object):
 
     def length(self):
         "length of vector"
-        return math.sqrt(self.dot(self))
+        return sqrt(self.dot(self))
 
     def normalized(self):
         "unit vector with same direction as self"
@@ -36,8 +36,8 @@ class Vec2D(object):
 
         centered = self - center
 
-        cosine = math.cos(angle)
-        sine = math.sin(angle)
+        cosine = cos(angle)
+        sine = sin(angle)
 
         new_pos_x = cosine * centered.pos_x - sine * centered.pos_y
         new_pos_y = sine * centered.pos_x + cosine * centered.pos_y
@@ -45,6 +45,31 @@ class Vec2D(object):
         final = Vec2D(new_pos_x, new_pos_y) + center
 
         return final
+
+    def oriented_angle(self, other):
+        "oriented angle from self to other"
+
+        vec1 = self.normalized()
+        vec2 = other.normalized()
+
+        cross_prod = vec1.cross(vec2) # sin(angle)
+        dot_prod = vec1.dot(vec2) # cos(angle)
+
+        if dot_prod < -1.0:
+            dot_prod = -1.0
+
+        if dot_prod > 1.0:
+            dot_prod = 1.0
+
+        if cross_prod > 0:
+            angle = acos(dot_prod)
+        else:
+            angle = -acos(dot_prod)
+
+        if angle < 0:
+            angle = angle + 2 * pi
+
+        return angle
 
 
     def __neg__(self):

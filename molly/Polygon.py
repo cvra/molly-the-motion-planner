@@ -25,6 +25,19 @@ class Polygon(object):
 
         return res
 
+    def intersects_tangent(self, tangent):
+        "return whether tangent intersects self"
+
+        for circle in self.corners:
+            if circle.intersects_tangent(tangent):
+                return True
+
+        for side in self.sides:
+            if side.intersect(tangent):
+                return True
+
+        return False
+
     def tangent_polygon(self, poly):
         "return tangents between self and other polygon"
 

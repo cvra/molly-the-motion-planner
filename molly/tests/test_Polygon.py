@@ -6,7 +6,7 @@ from molly.Polygon import Polygon
 from molly.Circle import Circle
 from molly.Tangent import Tangent
 from molly.Vec2D import Vec2D
-from math import sqrt
+from math import sqrt, pi
 
 class PolygonTest(unittest.TestCase):
     "test class"
@@ -87,6 +87,13 @@ class PolygonTest(unittest.TestCase):
         for ref_side in ref.sides:
             self.assertTrue(ref_side in poly.sides)
 
+    def test_circumference_simple(self):
+        p1 = Circle()
+        p2 = Circle(Vec2D(3, 0), 1)
+
+        poly = Polygon([p1, p2])
+
+        self.assertAlmostEqual(poly.circumference(), 6 + 2*pi)
 
 def dummy_polygon():
     "return a dummy triangular polygon"

@@ -73,14 +73,14 @@ class Polygon(object):
             acc += (tan.start_pos - tan.end_pos).length()
 
             if circle_dict.get(tan.start_circle) is None:
-                tan.circle_dict[tan.start_circle] = []
+                circle_dict[tan.start_circle] = []
 
-            tan.circle_dict[start_circle] = [(tan.start_pos, tan.start_orientation)]
+            circle_dict[tan.start_circle].append((tan.start_pos, tan.start_orient))
 
             if circle_dict.get(tan.end_circle) is None:
-                tan.circle_dict[tan.end_circle] = []
+                circle_dict[tan.end_circle] = []
 
-            tan.circle_dict[end_circle] = [(tan.end_pos, tan.end_orientation)]
+            circle_dict[tan.end_circle].append((tan.end_pos, tan.end_orient))
 
         for circ in circle_dict:
             points = circle_dict[circ]

@@ -4,10 +4,19 @@
 class Polygon(object):
     "convex polygon with circular corners"
 
-    def __init__(self, corners, sides):
-        # TODO verify input
-        self.corners = corners
-        self.sides = sides
+    def __init__(self, corners, sides=None):
+        if sides is not None:
+            self.corners = corners
+            self.sides = sides
+        elif len(corners) < 2:
+            raise ValueError("trying to initialize polygon from single circle")
+        else:
+            circle1 = corners[0]
+            circle2 = corners[1]
+            (cor, sid) = _from_circle_collection(circle1, circle2, corners[2:])
+
+            self.corners = cor
+            self.sides = sid
 
     def tangent_circle(self, circle):
         "tangents between self and circle"
@@ -76,3 +85,38 @@ class Polygon(object):
 
     def __ne__(self, other):
         return not self == other
+
+def _from_circle_collection(circle1, circle2, circles):
+    "computes sides and corners of a polygon from an arbitrary \
+    collection of circles"
+
+    tans = circle1._outertangents(circle2)
+    visited = set(circle1, circle2)
+
+    for new_circle in circles:
+        for old_circle in visited:
+            tans += new_circle._outertangents(old_circle)
+
+        visited.add(new_circle)
+
+    to_remove = set()
+
+    for tan1 in tans:
+        for tan2 in tans:
+            if tan1.intersects_tangent(tan2):
+                to_remove.add(tan1)
+                to_remove.add(tan2)
+
+    filtered = set()
+
+    for tan in tans:
+        if not tan in to_remove:
+            filtered.add(tan)
+
+    corners = set()
+
+    for tan in filtered:
+        corners.add(tan.start_circle)
+        corners.add(tan.end_circle)
+
+    return (list(corners), list(filtered))

@@ -3,6 +3,11 @@ molly-the-motion-planner
 
 simple 2d motion planner with circle based obstacles
 
+# Known Issues
+
+* currently only available under python2 until acceptable hash functions are
+  implemented for all classes that redefine ```__eq__```
+
 # Usage
 
 The principal functionality of molly is the ```get_path``` function in the

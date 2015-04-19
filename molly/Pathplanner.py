@@ -2,6 +2,7 @@
 
 from math import pi, copysign
 from molly.Circle import Circle
+from molly.Polygon import dist_on_circle
 from molly.Vec2D import Vec2D
 
 from collections import defaultdict
@@ -519,16 +520,7 @@ class CircleSegment(object):
 
     def length(self):
         "length of segment"
-
-        vec1 = (self.start - self.circle.pos).normalized()
-        vec2 = (self.end - self.circle.pos).normalized()
-
-        if self.orientation > 0:
-            angle = vec1.oriented_angle(vec2)
-        else:
-            angle = vec2.oriented_angle(vec1)
-
-        return angle * self.circle.radius
+        return dist_on_circle(self.start, self.end, self.circle, self.orientation)
 
     def tan(self, pos):
         "tangent on segment at pos"

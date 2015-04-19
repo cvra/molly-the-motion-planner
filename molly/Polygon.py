@@ -64,6 +64,33 @@ class Polygon(object):
 
         return res
 
+    def circumference(self):
+        "circumference of this polygon"
+        acc = 0
+        circle_dict = {}
+
+        for tan in self.sides:
+            acc += (tan.start_pos - tan.end_pos).length()
+
+            if circle_dict.get(tan.start_circle) is None:
+                tan.circle_dict[tan.start_circle] = []
+
+            tan.circle_dict[start_circle] = [(tan.start_pos, tan.start_orientation)]
+
+            if circle_dict.get(tan.end_circle) is None:
+                tan.circle_dict[tan.end_circle] = []
+
+            tan.circle_dict[end_circle] = [(tan.end_pos, tan.end_orientation)]
+
+        for circ in circle_dict:
+            points = circle_dict[circ]
+            (start, sori) = points[0]
+            (end, _) = points[1]
+
+            acc += dist_on_circle(start, end, circ, sori)
+
+        return acc
+
     def __add__(self, vec):
         "translate polygon by vec"
         new_corners = [corner + vec for corner in self.corners]
@@ -85,6 +112,19 @@ class Polygon(object):
 
     def __ne__(self, other):
         return not self == other
+
+
+def dist_on_circle(start, end, circle, orientation):
+    "distance between start and end on circle (orientation from end)"
+    vec1 = (start - circle.pos).normalized()
+    vec2 = (end - circle.pos).normalized()
+
+    if orientation > 0:
+        angle = vec1.oriented_angle(vec2)
+    else:
+        angle = vec2.oriented_angle(vec1)
+
+    return angle * circle.radius
 
 def _from_circle_collection(circle1, circle2, circles):
     "computes sides and corners of a polygon from an arbitrary \
@@ -120,3 +160,4 @@ def _from_circle_collection(circle1, circle2, circles):
         corners.add(tan.end_circle)
 
     return (list(corners), list(filtered))
+

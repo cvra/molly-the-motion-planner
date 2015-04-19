@@ -63,6 +63,29 @@ class PolygonTest(unittest.TestCase):
 
     # TODO test polygon to polygon tangents
 
+    @unittest.expectedFailure
+    def test_polygon_from_circles_bad1(self):
+        Polygon([])
+
+    @unittest.expectedFailure
+    def test_polygon_from_circles_bad2(self):
+        Polygon([Circle()])
+
+    def test_polygon_from_circles_normal(self):
+
+        ref = dummy_polygon()
+
+        poly = Polygon(ref.corners)
+
+        self.assertTrue(len(ref.corners) == len(poly.corners))
+
+        for ref_corner in ref.corners:
+            self.assertTrue(ref_corner in poly.corners)
+
+        self.assertTrue(len(ref.sides) == len(poly.sides))
+
+        for ref_side in ref.sides:
+            self.assertTrue(ref_side in poly.sides)
 
 
 def dummy_polygon():

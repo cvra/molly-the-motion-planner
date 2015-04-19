@@ -91,7 +91,7 @@ def _from_circle_collection(circle1, circle2, circles):
     collection of circles"
 
     tans = circle1._outertangents(circle2)
-    visited = set(circle1, circle2)
+    visited = set([circle1, circle2])
 
     for new_circle in circles:
         for old_circle in visited:
@@ -103,7 +103,7 @@ def _from_circle_collection(circle1, circle2, circles):
 
     for tan1 in tans:
         for tan2 in tans:
-            if tan1.intersects_tangent(tan2):
+            if tan1.intersect(tan2) and not tan1 == tan2:
                 to_remove.add(tan1)
                 to_remove.add(tan2)
 

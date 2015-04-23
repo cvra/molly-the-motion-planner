@@ -31,6 +31,12 @@ class LineSegmentTest(unittest.TestCase):
 
         self.assertTrue(seg.next_pos(Vec2D(), 1) == Vec2D(1, 0))
 
+    def test_radial_acc(self):
+        "test radial_acc method"
+        seg = LineSegment(Vec2D(), Vec2D(1, 0))
+        self.assertTrue(seg.radial_acc(Vec2D(), 1) == Vec2D())
+
+
 
 class CircleSegmentTest(unittest.TestCase):
     "test class"
@@ -58,6 +64,14 @@ class CircleSegmentTest(unittest.TestCase):
 
         self.assertTrue(seg1.tan(Vec2D(1, 0)) == Vec2D(0, 1))
         self.assertTrue(seg2.tan(Vec2D(1, 0)) == Vec2D(0, -1))
+
+    def test_radial_acc(self):
+        "test radial_acc method"
+
+        circle = Circle()
+        seg = CircleSegment(Vec2D(1, 0), Vec2D(0, 1), circle, 1)
+
+        self.assertTrue(seg.radial_acc(Vec2D(1, 0), 1) == Vec2D(-1, 0))
     
     def test_next_pos(self):
         "test next_pos method"

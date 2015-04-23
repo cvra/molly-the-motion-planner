@@ -31,9 +31,10 @@ def get_path(settings,
 * start_v: initial velocity of robot (float)
 * target_pos: target position you want robot to navigate to (molly.Vec2D)
 
-The result of a call to ```get_path``` is a list of tuples ```(pos, speed, time_stamp)```
+The result of a call to ```get_path``` is a list of tuples ```(pos, speed, acc, time_stamp)```
 where ```pos``` is a ```molly.Vec2D``` describing a point on the trajectory,
-```speed``` is a ```molly.Vec2D``` describing robot velocity at ```pos``` and
+```speed``` is a ```molly.Vec2D``` describing robot velocity at ```pos```, 
+```acc``` is a ```molly.Vec2D``` describing robot acceleration at ```pos``` and
 ```time_stamp``` is the time passed since the start of the trajectory.
 
 **Note:** molly plans a path for a point object, so you have to add robot radius
@@ -57,7 +58,7 @@ class Settings(object):
 
 Content of a ```molly.Settings``` object:
 
-* max_acc: maxmimum acceleration of the robot (m/s^2)
+* max_acc: maxmimum *tangential* acceleration of the robot (m/s^2)
 * max_v: maximum velocity of the robot (m/s)
 * time_resolution: time step used when discretizing trajectory (s)
 * static_poly_obs: list of polygonal obstacles, that are always in the environment and don't move 

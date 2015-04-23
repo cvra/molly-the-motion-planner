@@ -390,7 +390,7 @@ def discretize_trajectory(segments, v_start, v_end, settings):
                                        acc_until_dist,
                                        decc_from_dist,
                                        settings)
-        (_, speed, time_stamp) = res[-1]
+        (_, speed, _, time_stamp) = res[-1]
         current_d = current_d + seg.length()
         current_t = time_stamp
         current_v = speed.length()
@@ -434,20 +434,30 @@ def discretize_segment(segment,
 
         if current_d_travelled < acc_until:
             current_v = current_v + settings.max_acc * delta_t
+            current_acc = settings.max_acc
         elif current_d_travelled < dec_from:
             current_v = settings.max_v
+            current_acc = 0
         else:
             current_v = current_v - settings.max_acc * delta_t
+            current_acc = - settings.max_acc
             if current_v < 0:
                 return res
 
         current_speed_vector = segment.tan(current_pos) * current_v
 
+        current_acc_vector = segment.tan(current_pos) * current_acc
+        current_acc_vector = current_acc_vector + \
+                             segment.radial_acc(current_pos, current_v)
+
         current_time_stamp = current_time_stamp + delta_t
 
         d_remaining = d_remaining - delta_dist
 
-        res.append((current_pos, current_speed_vector, current_time_stamp))
+        res.append((current_pos,
+                    current_speed_vector,
+                    current_acc_vector,
+                    current_time_stamp))
 
     return res
 
@@ -497,6 +507,10 @@ class LineSegment(object):
         "tangent on segment at pos"
         return (self.end - self.start).normalized()
 
+    def radial_acc(self, pos, speed):
+        "centripetal acceleration at pos with given speed"
+        return Vec2D()
+
     def next_pos(self, pos, dist):
         "point on segment with dist to pos"
         return pos + (self.tan(pos) * dist)
@@ -525,6 +539,15 @@ class CircleSegment(object):
     def tan(self, pos):
         "tangent on segment at pos"
         return self.circle.tangent_vector(pos, self.orientation).normalized()
+
+    def radial_acc(self, pos, speed):
+        "centripetal acceleration at pos with given speed"
+
+        res = (self.circle.pos - pos).normalized()
+
+        acc = (speed * speed) / self.circle.radius
+
+        return res * acc
 
     def next_pos(self, pos, dist):
         "point on segment with dist to pos"

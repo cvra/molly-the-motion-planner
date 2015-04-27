@@ -413,9 +413,23 @@ def discretize_segment(segment,
     current_d_travelled = d_travelled
     d_remaining = segment.length()
 
+    if current_d_travelled < acc_until:
+        current_acc = settings.max_acc
+    elif current_d_travelled > dec_from:
+        current_d_travelled = -settings.max_acc
+    else:
+        current_acc = 0
+        
+    current_acc_vector = segment.tan(current_pos) * current_acc
+    current_acc_vector = current_acc_vector + \
+                         segment.radial_acc(current_pos, current_v)
+
     res = []
 
-    res.append((current_pos, current_speed_vector, current_time_stamp))
+    res.append((current_pos,
+                current_speed_vector,
+                current_acc_vector,
+                current_time_stamp))
 
     delta_t = settings.time_resolution
 

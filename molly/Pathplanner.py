@@ -326,18 +326,17 @@ def a_star(start_nodes, end_pos):
             return res
 
         for neigh in current.neighbours():
+
+            if neigh in visited:
+                continue
+
             tentative_g_score = g_score[current] + \
                                 current.dist_to_neighbour(neigh)
 
-            tentative_f_score = tentative_g_score + \
-                                (end_pos - neigh.pos).length()
-
-            if (neigh in visited) and (tentative_f_score >= f_score[neigh]):
-                continue
-            else:
+            if (not neigh in queue) or (g_score[neigh] < tentative_g_score):
                 parents[neigh] = current
                 g_score[neigh] = tentative_g_score
-                f_score[neigh] = tentative_f_score
+                f_score[neigh] = g_score[neigh] + (end_pos - neigh.pos).length()
                 queue[neigh] = f_score[neigh]
 
     return []

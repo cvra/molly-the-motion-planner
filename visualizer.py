@@ -9,7 +9,7 @@ from molly.Tangent import Tangent
 from molly.Polygon import Polygon
 
 PX_PER_METER = 400
-SETTINGS = Settings()
+SETTINGS = Settings(static_poly_obs=[])
 WIDTH = int(SETTINGS.width * PX_PER_METER)
 HEIGHT = int(SETTINGS.height * PX_PER_METER)
 #BACKGROUND = pygame.image.load("")
@@ -27,9 +27,9 @@ PURPLE = (255, 0, 255)
 def main():
     "draw loop"
 
-    start = Vec2D(0.1, 0.1)
-    end = Vec2D(2.1, 1.1)
-    direction = Vec2D(0, 0.1)
+    start = Vec2D(1.0, 1.0)
+    end = Vec2D(2.0, 1.0)
+    direction = Vec2D(1.0, 0.0)
 
     obs1 = Circle(Vec2D(1.5, 0.75), 0.2)
     #obs2 = Circle(Vec2D(0.9, 0.6), 0.2)
@@ -41,8 +41,11 @@ def main():
 
     poly1 = Polygon([corner1, corner2], [side1, side2]) + Vec2D(0.15, 0.3)
 
-    circs = [obs1]
-    polys = [poly1]
+    #circs = [obs1]
+    #polys = [poly1]
+
+    circs = []
+    polys = []
 
     paused = False
     while True:

@@ -302,7 +302,7 @@ def neighbours_on_circle(points, circle, pos):
     for point in points:
         if point == pos:
             self_count += 1
-    self_ignore = self_count > 1
+    self_ignore = self_count <= 1
 
     for point in points:
 

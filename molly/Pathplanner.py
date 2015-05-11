@@ -297,9 +297,16 @@ def neighbours_on_circle(points, circle, pos):
 
     vec1 = pos - circle.pos
 
+    # pos is only a neighbour if it appears more than once in points list
+    self_count = 0
+    for point in points:
+        if point == pos:
+            self_count += 1
+    self_ignore = self_count > 1
+
     for point in points:
 
-        if point == pos:
+        if point == pos and self_ignore:
             continue
 
         angle = vec1.oriented_angle(point - circle.pos)

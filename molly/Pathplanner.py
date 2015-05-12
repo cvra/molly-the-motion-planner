@@ -61,7 +61,7 @@ def ramp_down(start_pos, start_heading, start_v, settings):
     res = [(current_pos, direction * current_v, current_time_stamp)]
 
     while current_v > 0:
-        current_pos = current_pos + current_v * settings.time_resolution
+        current_pos = current_pos + direction * current_v * settings.time_resolution
         current_v = current_v - settings.max_acc * settings.time_resolution
         if current_v < 0:
             current_v = 0
@@ -247,25 +247,45 @@ def build_graph(tans, start_pos, start_circles, settings):
     pos_neigh = node_map.get((pos_start_neigh, 1))
     neg_neigh = node_map.get((neg_start_neigh, -1))
 
-    res = []
+    pos_node = Node(start_pos, 1)
+    neg_node = Node(start_pos, -1)
 
     if pos_neigh:
-        node = Node(start_pos, 1)
         seg = CircleSegment(start_pos, pos_neigh.pos, pos_start_circle, 1)
 
         if circle_segment_inside_bounds(settings, seg):
-            node.add_neigh(pos_neigh, seg)
-            res.append(node)
+            pos_node.add_neigh(pos_neigh, seg)
 
     if neg_neigh:
-        node = Node(start_pos, -1)
         seg = CircleSegment(start_pos, neg_neigh.pos, neg_start_circle, -1)
 
         if circle_segment_inside_bounds(settings, seg):
-            node.add_neigh(neg_neigh, seg)
-            res.append(node)
+            neg_node.add_neigh(neg_neigh, seg)
 
-    return res
+    for tan in tans:
+        if tan.start_pos == start_pos:
+            seg = LineSegment(start_pos, tan.end_pos)
+            pneigh = node_map.get((tan.end_pos, 1))
+            nneigh = node_map.get((tan.end_pos, -1))
+            if pneigh:
+                pos_node.add_neigh(pneigh, seg)
+                neg_node.add_neigh(pneigh, seg)
+            if nneigh:
+                pos_node.add_neigh(nneigh, seg)
+                neg_node.add_neigh(nneigh, seg)
+
+        elif tan.end_pos == start_pos:
+            seg = LineSegment(start_pos, tan.start_pos)
+            pneigh = node_map.get((tan.start_pos, 1))
+            nneigh = node_map.get((tan.start_pos, -1))
+            if pneigh:
+                pos_node.add_neigh(pneigh, seg)
+                neg_node.add_neigh(pneigh, seg)
+            if nneigh:
+                pos_node.add_neigh(nneigh, seg)
+                neg_node.add_neigh(nneigh, seg)
+
+    return [pos_node, neg_node]
 
 def neighbours_on_circle(points, circle, pos):
     "get oriented angle of points on circle and return (min, max)"
@@ -277,9 +297,16 @@ def neighbours_on_circle(points, circle, pos):
 
     vec1 = pos - circle.pos
 
+    # pos is only a neighbour if it appears more than once in points list
+    self_count = 0
+    for point in points:
+        if point == pos:
+            self_count += 1
+    self_ignore = self_count <= 1
+
     for point in points:
 
-        if point == pos:
+        if point == pos and self_ignore:
             continue
 
         angle = vec1.oriented_angle(point - circle.pos)
@@ -326,18 +353,17 @@ def a_star(start_nodes, end_pos):
             return res
 
         for neigh in current.neighbours():
+
+            if neigh in visited:
+                continue
+
             tentative_g_score = g_score[current] + \
                                 current.dist_to_neighbour(neigh)
 
-            tentative_f_score = tentative_g_score + \
-                                (end_pos - neigh.pos).length()
-
-            if (neigh in visited) and (tentative_f_score >= f_score[neigh]):
-                continue
-            else:
+            if (not neigh in queue) or (g_score[neigh] < tentative_g_score):
                 parents[neigh] = current
                 g_score[neigh] = tentative_g_score
-                f_score[neigh] = tentative_f_score
+                f_score[neigh] = g_score[neigh] + (end_pos - neigh.pos).length()
                 queue[neigh] = f_score[neigh]
 
     return []

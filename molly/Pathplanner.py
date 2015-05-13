@@ -67,10 +67,12 @@ def ramp_down(start_pos, start_heading, start_v, settings):
             current_v = 0
         current_time_stamp = current_time_stamp + settings.time_resolution
 
-        res.append((current_pos, direction * current_v, current_time_stamp))
+        res.append((current_pos,
+                    direction * current_v,
+                    - direction * settings.max_acc,
+                    current_time_stamp))
 
     return res
-
 
 def point_inside_bounds(settings, vec):
     "check if vec is inside playground"

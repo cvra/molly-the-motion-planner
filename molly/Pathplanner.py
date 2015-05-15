@@ -58,7 +58,10 @@ def ramp_down(start_pos, start_heading, start_v, settings):
     current_v = start_v
     current_time_stamp = 0.0
 
-    res = [(current_pos, direction * current_v, current_time_stamp)]
+    res = [(current_pos,
+            direction * current_v,
+            - direction * settings.max_acc,
+            current_time_stamp)]
 
     while current_v > 0:
         current_pos = current_pos + direction * current_v * settings.time_resolution

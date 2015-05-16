@@ -1,2 +1,2 @@
 heapdict
-git+https://github.com:cvra/inverse-kinematics.git
+git+https://github.com/cvra/inverse-kinematics.git

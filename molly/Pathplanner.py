@@ -41,6 +41,14 @@ def get_path(settings,
 
     all_tans = [tan for tan in all_tans if tangent_inside_bounds(settings, tan)]
 
+    # filter out equal tangents
+    filtered = []
+    for tan in all_tans:
+        if not tan in filtered:
+            filtered.append(tan)
+
+    all_tans = filtered
+
     graph = build_graph(all_tans, start_pos, start_circles, settings)
 
     segments = a_star(graph, target_pos)
@@ -206,7 +214,6 @@ def build_graph(tans, start_pos, start_circles, settings):
         node_map[(end, 1)] = Node(end, 1)
         node_map[(end, -1)] = Node(end, -1)
 
-
     for circle in circle_map:
         points = circle_map.get(circle)
 
@@ -299,7 +306,7 @@ def neighbours_on_circle(points, circle, pos):
     "get oriented angle of points on circle and return (min, max)"
 
     if circle.radius == 0:
-        return (pos, pos) #(points[0], points[-1])
+        return (points[1], points[-1])
 
     max_val = 0
     min_val = 2 * pi

@@ -175,7 +175,7 @@ class Vec2DTest(unittest.TestCase):
 
         vec = Vec2D(3, 4)
 
-        self.assertTrue(vec == vec)
+        self.assertTrue(vec.is_equal(vec))
 
     def test_approximate_equality(self):
         "vectors within Vec2D.EPSILON distance of each other should count as \
@@ -185,8 +185,8 @@ class Vec2DTest(unittest.TestCase):
 
         approx = vec + Vec2D(1, 0) * (0.9 * Vec2D.EPSILON)
 
-        self.assertTrue(vec == approx)
-        self.assertFalse(vec != approx)
+        self.assertTrue(vec.is_equal(approx))
+        self.assertFalse(not vec.is_equal(approx))
 
     def test_positive_orientation(self):
         "test that orientation returns postive value for positively oriented \

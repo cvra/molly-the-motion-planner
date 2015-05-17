@@ -23,18 +23,18 @@ class LineSegmentTest(unittest.TestCase):
         "test tan method"
         seg = LineSegment(Vec2D(), Vec2D(1, 0))
 
-        self.assertTrue(seg.tan(None) == Vec2D(1, 0))
+        self.assertTrue(seg.tan(None).is_equal(Vec2D(1, 0)))
 
     def test_next_pos(self):
         "test next_pos method"
         seg = LineSegment(Vec2D(), Vec2D(1, 0))
 
-        self.assertTrue(seg.next_pos(Vec2D(), 1) == Vec2D(1, 0))
+        self.assertTrue(seg.next_pos(Vec2D(), 1).is_equal(Vec2D(1, 0)))
 
     def test_radial_acc(self):
         "test radial_acc method"
         seg = LineSegment(Vec2D(), Vec2D(1, 0))
-        self.assertTrue(seg.radial_acc(Vec2D(), 1) == Vec2D())
+        self.assertTrue(seg.radial_acc(Vec2D(), 1).is_equal(Vec2D()))
 
 
 
@@ -62,8 +62,8 @@ class CircleSegmentTest(unittest.TestCase):
         seg1 = CircleSegment(Vec2D(1, 0), Vec2D(0, 1), circle, 1)
         seg2 = CircleSegment(Vec2D(1, 0), Vec2D(0, 1), circle, -1)
 
-        self.assertTrue(seg1.tan(Vec2D(1, 0)) == Vec2D(0, 1))
-        self.assertTrue(seg2.tan(Vec2D(1, 0)) == Vec2D(0, -1))
+        self.assertTrue(seg1.tan(Vec2D(1, 0)).is_equal(Vec2D(0, 1)))
+        self.assertTrue(seg2.tan(Vec2D(1, 0)).is_equal(Vec2D(0, -1)))
 
     def test_radial_acc(self):
         "test radial_acc method"
@@ -71,8 +71,8 @@ class CircleSegmentTest(unittest.TestCase):
         circle = Circle()
         seg = CircleSegment(Vec2D(1, 0), Vec2D(0, 1), circle, 1)
 
-        self.assertTrue(seg.radial_acc(Vec2D(1, 0), 1) == Vec2D(-1, 0))
-    
+        self.assertTrue(seg.radial_acc(Vec2D(1, 0), 1).is_equal(Vec2D(-1, 0)))
+
     def test_next_pos(self):
         "test next_pos method"
 
@@ -80,7 +80,7 @@ class CircleSegmentTest(unittest.TestCase):
 
         seg = CircleSegment(Vec2D(1, 0), Vec2D(0, 1), circle, 1)
 
-        self.assertTrue(seg.next_pos(Vec2D(1, 0), pi * 0.5) == Vec2D(0, 1))
+        self.assertTrue(seg.next_pos(Vec2D(1, 0), pi * 0.5).is_equal(Vec2D(0, 1)))
 
 if __name__ == "__main__":
     unittest.main()

@@ -24,11 +24,11 @@ class TangentTest(unittest.TestCase):
                       end_pos,
                       end_circ,
                       end_orient)
-        self.assertTrue(tan.start_pos == start_pos)
-        self.assertTrue(tan.start_pos == start_pos)
-        self.assertTrue(tan.start_circle == start_circ)
+        self.assertTrue(tan.start_pos.is_equal(start_pos))
+        self.assertTrue(tan.start_pos.is_equal(start_pos))
+        self.assertTrue(tan.start_circle.is_equal(start_circ))
         self.assertTrue(tan.end_orient == end_orient)
-        self.assertTrue(tan.end_circle == end_circ)
+        self.assertTrue(tan.end_circle.is_equal(end_circ))
         self.assertTrue(tan.end_orient == end_orient)
 
     def test_simple_intersection(self):
@@ -83,8 +83,8 @@ class TangentTest(unittest.TestCase):
 
         translated = tan + Vec2D()
 
-        self.assertTrue(tan == translated)
-        self.assertTrue(translated == tan)
+        self.assertTrue(tan.is_equal(translated))
+        self.assertTrue(translated.is_equal(tan))
 
     def test_translate_general(self):
         "test translation by non-zero vector"
@@ -103,8 +103,8 @@ class TangentTest(unittest.TestCase):
 
         verifier = Tangent(Vec2D(1, 1), v_circ1, 1, Vec2D(5, 1), v_circ2, -1)
 
-        self.assertTrue(verifier == translated)
-        self.assertTrue(translated == verifier)
+        self.assertTrue(verifier.is_equal(translated))
+        self.assertTrue(translated.is_equal(verifier))
 
 if __name__ == "__main__":
     unittest.main()

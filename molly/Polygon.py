@@ -98,20 +98,17 @@ class Polygon(object):
 
         return Polygon(new_corners, new_sides)
 
-    def __eq__(self, other):
+    def is_equal(self, other):
 
         if len(self.corners) != len(other.corners):
             return False
 
-        equal_corners = all(c1 == c2
+        equal_corners = all(c1.is_equal(c2)
                             for c1, c2 in zip(self.corners, other.corners))
-        equal_sides = all(s1 == s2
+        equal_sides = all(s1.is_equal(s2)
                           for s1, s2 in zip(self.sides, other.sides))
 
         return equal_corners and equal_sides
-
-    def __ne__(self, other):
-        return not self == other
 
 
 def dist_on_circle(start, end, circle, orientation):
@@ -143,7 +140,7 @@ def _from_circle_collection(circle1, circle2, circles):
 
     for tan1 in tans:
         for tan2 in tans:
-            if tan1.intersect(tan2) and not tan1 == tan2:
+            if tan1.intersect(tan2) and not tan1.is_equal(tan2):
                 to_remove.add(tan1)
                 to_remove.add(tan2)
 

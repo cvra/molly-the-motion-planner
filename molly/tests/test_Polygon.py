@@ -18,8 +18,8 @@ class PolygonTest(unittest.TestCase):
 
         translated = dummy + Vec2D()
 
-        self.assertTrue(translated == dummy)
-        self.assertTrue(dummy == translated)
+        self.assertTrue(translated.is_equal(dummy))
+        self.assertTrue(dummy.is_equal(translated))
 
     def test_translate_nonzero(self):
         "test translating polygon by nonzero vector"
@@ -32,8 +32,8 @@ class PolygonTest(unittest.TestCase):
 
         trans_dummy = translated_dummy(translation)
 
-        self.assertTrue(translated == trans_dummy)
-        self.assertTrue(trans_dummy == translated)
+        self.assertTrue(translated.is_equal(trans_dummy))
+        self.assertTrue(trans_dummy.is_equal(translated))
 
     def test_polycircle_intersection(self):
         "test intersection between polygon and circle"
@@ -57,7 +57,7 @@ class PolygonTest(unittest.TestCase):
 
         tans = dummy.tangent_circle(circ)
 
-        self.assertTrue(tan1 in tans and tan2 in tans)
+        self.assertTrue(any(map(tan1.is_equal, tans)) and any(map(tan2.is_equal, tans)))
 
         # TODO verify other 2 tangents
 
@@ -85,7 +85,7 @@ class PolygonTest(unittest.TestCase):
         self.assertTrue(len(ref.sides) == len(poly.sides))
 
         for ref_side in ref.sides:
-            self.assertTrue(ref_side in poly.sides)
+            self.assertTrue(any(map(ref_side.is_equal, poly.sides)))
 
     def test_circumference_simple(self):
         p1 = Circle()

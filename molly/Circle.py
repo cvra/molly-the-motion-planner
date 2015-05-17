@@ -104,7 +104,7 @@ class Circle(object):
     def intersects_tangent(self, tangent):
         "return whether self intersects with tangent"
 
-        if self == tangent.start_circle or self == tangent.end_circle:
+        if self.is_equal(tangent.start_circle) or self.is_equal(tangent.end_circle):
             return False
 
         direction = tangent.end_pos - tangent.start_pos
@@ -122,7 +122,7 @@ class Circle(object):
     def tangent_intersection_point(self, tangent):
         "return whether self intersects with tangent"
 
-        if self == tangent.start_circle or self == tangent.end_circle:
+        if self.is_equal(tangent.start_circle) or self.is_equal(tangent.end_circle):
             return False
 
         direction = tangent.end_pos - tangent.start_pos
@@ -157,18 +157,14 @@ class Circle(object):
         "translate circle by vec"
         return Circle(self.pos + vec, self.radius)
 
-    def __eq__(self, other):
+    def is_equal(self, other):
         "two circles are equal if the have the same center position and radius"
 
         if other is None:
             return False
 
-        return (self.pos == other.pos and
+        return (self.pos.is_equal(other.pos) and
                 abs(self.radius - other.radius) < Vec2D.EPSILON)
-
-    def __ne__(self, other):
-        "complement of equals"
-        return not self == other
 
     @staticmethod
     def solve_quadratic(param_a, param_b, param_c):

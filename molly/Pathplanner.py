@@ -268,7 +268,7 @@ def build_graph(tans, start_pos, start_circles, settings):
             neg_node.add_neigh(neg_neigh, seg)
 
     for tan in tans:
-        if tan.start_pos == start_pos:
+        if tan.start_pos.is_equal(start_pos):
             seg = LineSegment(start_pos, tan.end_pos)
             pneigh = node_map.get((tan.end_pos, 1))
             nneigh = node_map.get((tan.end_pos, -1))
@@ -279,7 +279,7 @@ def build_graph(tans, start_pos, start_circles, settings):
                 pos_node.add_neigh(nneigh, seg)
                 neg_node.add_neigh(nneigh, seg)
 
-        elif tan.end_pos == start_pos:
+        elif tan.end_pos.is_equal(start_pos):
             seg = LineSegment(start_pos, tan.start_pos)
             pneigh = node_map.get((tan.start_pos, 1))
             nneigh = node_map.get((tan.start_pos, -1))
@@ -305,13 +305,13 @@ def neighbours_on_circle(points, circle, pos):
     # pos is only a neighbour if it appears more than once in points list
     self_count = 0
     for point in points:
-        if point == pos:
+        if point.is_equal(pos):
             self_count += 1
     self_ignore = self_count <= 1
 
     for point in points:
 
-        if point == pos and self_ignore:
+        if point.is_equal(pos) and self_ignore:
             continue
 
         angle = vec1.oriented_angle(point - circle.pos)
@@ -344,7 +344,7 @@ def a_star(start_nodes, end_pos):
         current = queue.popitem()[0]
         visited.add(current)
 
-        if current.pos == end_pos:
+        if current.pos.is_equal(end_pos):
             res = []
             curr = current
             parent = parents.get(curr)
@@ -450,7 +450,7 @@ def discretize_segment(segment,
         current_d_travelled = -settings.max_acc
     else:
         current_acc = 0
-        
+
     current_acc_vector = segment.tan(current_pos) * current_acc
     current_acc_vector = current_acc_vector + \
                          segment.radial_acc(current_pos, current_v)

@@ -87,11 +87,8 @@ class Vec2D(object):
     def __str__(self):
         return "({x},{y})".format(x=self.pos_x, y=self.pos_y)
 
-    def __eq__(self, other):
+    def is_equal(self, other):
         return (self - other).length() < Vec2D.EPSILON
-
-    def __ne__(self, other):
-        return not self == other
 
     @staticmethod
     def orientation(vec1, vec2, vec3):

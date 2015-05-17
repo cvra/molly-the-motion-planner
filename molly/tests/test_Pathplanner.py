@@ -25,8 +25,8 @@ class PathplannerTest(unittest.TestCase):
 
         (test_pos, test_neg) = pp.get_start_circles(pos, direction, 1)
 
-        self.assertTrue(test_pos == pos_circ)
-        self.assertTrue(test_neg == neg_circ)
+        self.assertTrue(test_pos.is_equal(pos_circ))
+        self.assertTrue(test_neg.is_equal(neg_circ))
 
     def test_all_tangents_simple1(self):
         "test that all_tangents returns all tangents of two circles \
@@ -39,7 +39,7 @@ class PathplannerTest(unittest.TestCase):
 
         to_test = pp.all_tangents([circ1, circ2], [])
 
-        verificator = all(test in tangents for test in to_test)
+        verificator = all(any(map(test.is_equal, tangents)) for test in to_test)
 
         self.assertTrue(verificator)
 
@@ -54,7 +54,7 @@ class PathplannerTest(unittest.TestCase):
 
         to_test = pp.all_tangents([circ], [poly])
 
-        verificator = all(test in correct_tans for test in to_test)
+        verificator = all(any(map(test.is_equal, correct_tans)) for test in to_test)
 
         self.assertTrue(verificator)
 
@@ -71,7 +71,7 @@ class PathplannerTest(unittest.TestCase):
         sorted_list = pp.sort_points_on_circle([Vec2D(1, 0)], Circle())
 
         self.assertTrue(len(sorted_list) == 1)
-        self.assertTrue(sorted_list[0] == Vec2D(1, 0))
+        self.assertTrue(sorted_list[0].is_equal(Vec2D(1, 0)))
 
     def test_sort_points_general(self):
         "general test on unit circle"
@@ -86,10 +86,10 @@ class PathplannerTest(unittest.TestCase):
         to_test = pp.sort_points_on_circle(unsorted, Circle())
 
         self.assertTrue(len(to_test) == 4)
-        self.assertTrue(to_test[0] == point2)
-        self.assertTrue(to_test[1] == point3)
-        self.assertTrue(to_test[2] == point4)
-        self.assertTrue(to_test[3] == point1)
+        self.assertTrue(to_test[0].is_equal(point2))
+        self.assertTrue(to_test[1].is_equal(point3))
+        self.assertTrue(to_test[2].is_equal(point4))
+        self.assertTrue(to_test[3].is_equal(point1))
 
     def test_neighs_circle_one_element(self):
         "single point has no neighbours"
@@ -113,8 +113,8 @@ class PathplannerTest(unittest.TestCase):
 
         (pos, neg) = pp.neighbours_on_circle(points, Circle(), point1)
 
-        self.assertTrue(pos == point2)
-        self.assertTrue(neg == point2)
+        self.assertTrue(pos.is_equal(point2))
+        self.assertTrue(neg.is_equal(point2))
 
 
     def test_neighs_circle_general(self):
@@ -129,8 +129,8 @@ class PathplannerTest(unittest.TestCase):
 
         (pos, neg) = pp.neighbours_on_circle(unsorted, Circle(), Vec2D(1, 0))
 
-        self.assertTrue(pos == point2)
-        self.assertTrue(neg == point4)
+        self.assertTrue(pos.is_equal(point2))
+        self.assertTrue(neg.is_equal(point4))
 
 
 

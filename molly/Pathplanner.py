@@ -35,7 +35,17 @@ def get_path(settings,
 
     start_circle_tans = start_circles[0].tangent_circle(start_circles[1])
 
-    all_tans = [tan for tan in all_tans if not tan in start_circle_tans]
+    filtered = []
+    for tan in all_tans:
+        add = True
+        for stan in start_circle_tans:
+            if tan.is_equal(stan):
+                add = False
+                break
+        if add:
+            filtered.append(tan)
+
+    all_tans = filtered
 
     # remove tangents leading out of bounds
 
@@ -44,7 +54,12 @@ def get_path(settings,
     # filter out equal tangents
     filtered = []
     for tan in all_tans:
-        if not tan in filtered:
+        is_inside = False
+        for fil in filtered:
+            if fil.is_equal(tan):
+                is_inside = True
+                break
+        if not is_inside:
             filtered.append(tan)
 
     all_tans = filtered
@@ -311,6 +326,9 @@ def neighbours_on_circle(points, circle, pos):
     max_pt = None
     min_pt = None
 
+    if pos.is_equal(circle.pos):
+        return (pos, pos)
+
     vec1 = pos - circle.pos
 
     # pos is only a neighbour if it appears more than once in points list
@@ -412,15 +430,6 @@ def discretize_trajectory(segments, v_start, v_end, settings):
         res.append((pos_vec, vel_vec, acc_vec, time))
 
     return res
-
-def discretize_segment(segment,
-                       d_travelled,
-                       time_stamp,
-                       v_init,
-                       acc_until,
-                       dec_from,
-                       settings):
-    "discretize a segment"
 
 def discretize_general_trajectory(v_start, v_end, path_length, settings):
     "wrap and abuse pickit 1D ramp generation"

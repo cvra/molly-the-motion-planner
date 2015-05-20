@@ -16,7 +16,7 @@ class CircleTest(unittest.TestCase):
 
         circle = Circle()
 
-        self.assertTrue(circle.pos == Vec2D())
+        self.assertTrue(circle.pos.is_equal(Vec2D()))
         self.assertAlmostEqual(circle.radius, 1.0)
 
     def test_standard_constructor(self):
@@ -27,7 +27,7 @@ class CircleTest(unittest.TestCase):
 
         circle = Circle(center, radius)
 
-        self.assertTrue(circle.pos == center)
+        self.assertTrue(circle.pos.is_equal(center))
         self.assertAlmostEqual(radius, circle.radius)
 
     def test_circle_circle_intersection(self):
@@ -126,7 +126,7 @@ class CircleTest(unittest.TestCase):
 
         translated = circle + trans
 
-        self.assertTrue(translated.pos == circle.pos + trans)
+        self.assertTrue(translated.pos.is_equal(circle.pos + trans))
         self.assertAlmostEqual(translated.radius, circle.radius)
 
     def test_equality(self):
@@ -137,11 +137,11 @@ class CircleTest(unittest.TestCase):
             Vec2D(1, 0.9 * Vec2D.EPSILON),
             1.0 + 0.9 * Vec2D.EPSILON)
 
-        self.assertTrue(circle1 == circle2)
-        self.assertTrue(circle2 == circle1)
+        self.assertTrue(circle1.is_equal(circle2))
+        self.assertTrue(circle2.is_equal(circle1))
         # equality is symmetric
-        self.assertFalse(circle1 != circle2)
-        self.assertFalse(circle2 != circle1)
+        self.assertFalse(not circle1.is_equal(circle2))
+        self.assertFalse(not circle2.is_equal(circle1))
 
     def test_quadratic_no_solutions(self):
         "test result of unsatisfiable quadratic equation"
@@ -226,7 +226,7 @@ class CircleTest(unittest.TestCase):
         tan1 = Tangent(Vec2D(0, 2), circle1, 1, Vec2D(3, 2), circle2, -1)
         tan2 = Tangent(Vec2D(0, -2), circle1, -1, Vec2D(3, -2), circle2, 1)
 
-        verify = all(tan == tan1 or tan == tan2 for tan in tans)
+        verify = all(tan.is_equal(tan1) or tan.is_equal(tan2) for tan in tans)
 
         self.assertTrue(verify)
 
@@ -265,7 +265,7 @@ class CircleTest(unittest.TestCase):
 
         self.assertTrue(len(tans) == 4)
 
-        valid = all(t in r_tans for t in tans)
+        valid = all(any(map(t.is_equal, r_tans)) for t in tans)
 
         self.assertTrue(valid)
 
@@ -277,7 +277,7 @@ class CircleTest(unittest.TestCase):
         circ = Circle()
         pos = Vec2D(1, 0)
 
-        self.assertTrue(circ.tangent_vector(pos, 1) == Vec2D(0, 1))
+        self.assertTrue(circ.tangent_vector(pos, 1).is_equal(Vec2D(0, 1)))
 
 
 if __name__ == "__main__":

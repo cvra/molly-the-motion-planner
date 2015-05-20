@@ -49,12 +49,12 @@ class Tangent(object):
         "return whether self intersects circle"
         return circle.intersects_tangent(self)
 
-    def __eq__(self, other):
+    def is_equal(self, other):
 
-        if self.start_pos == other.start_pos:
-            same_start_circle = self.start_circle == other.start_circle
-            same_end_circle = self.end_circle == other.end_circle
-            same_end_pos = self.end_pos == other.end_pos
+        if self.start_pos.is_equal(other.start_pos):
+            same_start_circle = self.start_circle.is_equal(other.start_circle)
+            same_end_circle = self.end_circle.is_equal(other.end_circle)
+            same_end_pos = self.end_pos.is_equal(other.end_pos)
             same_start_orient = self.start_orient * other.start_orient > 0
             same_end_orient = self.end_orient * other.end_orient > 0
 
@@ -63,10 +63,10 @@ class Tangent(object):
                    same_end_pos and \
                    same_start_orient and \
                    same_end_orient
-        if self.start_pos == other.end_pos:
-            same_start_circle = self.start_circle == other.end_circle
-            same_end_circle = self.end_circle == other.start_circle
-            same_end_pos = self.end_pos == other.start_pos
+        if self.start_pos.is_equal(other.end_pos):
+            same_start_circle = self.start_circle.is_equal(other.end_circle)
+            same_end_circle = self.end_circle.is_equal(other.start_circle)
+            same_end_pos = self.end_pos.is_equal(other.start_pos)
             same_start_orient = self.start_orient * other.end_orient > 0
             same_end_orient = self.end_orient * other.start_orient > 0
 
@@ -77,9 +77,6 @@ class Tangent(object):
                    same_end_orient
         else:
             return False
-
-    def __ne__(self, other):
-        return not self == other
 
     def __add__(self, vec):
         "translate self by vec"

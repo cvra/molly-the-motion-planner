@@ -5,6 +5,9 @@ from molly.Circle import Circle
 from molly.Polygon import dist_on_circle
 from molly.Vec2D import Vec2D
 
+from pickit.Joint import Joint
+from pickit.Datatypes import JointMinMaxConstraint, TimeToDestination
+
 from collections import defaultdict
 from heapdict import heapdict
 
@@ -32,11 +35,34 @@ def get_path(settings,
 
     start_circle_tans = start_circles[0].tangent_circle(start_circles[1])
 
-    all_tans = [tan for tan in all_tans if not tan in start_circle_tans]
+    filtered = []
+    for tan in all_tans:
+        add = True
+        for stan in start_circle_tans:
+            if tan.is_equal(stan):
+                add = False
+                break
+        if add:
+            filtered.append(tan)
+
+    all_tans = filtered
 
     # remove tangents leading out of bounds
 
     all_tans = [tan for tan in all_tans if tangent_inside_bounds(settings, tan)]
+
+    # filter out equal tangents
+    filtered = []
+    for tan in all_tans:
+        is_inside = False
+        for fil in filtered:
+            if fil.is_equal(tan):
+                is_inside = True
+                break
+        if not is_inside:
+            filtered.append(tan)
+
+    all_tans = filtered
 
     graph = build_graph(all_tans, start_pos, start_circles, settings)
 
@@ -268,7 +294,7 @@ def build_graph(tans, start_pos, start_circles, settings):
             neg_node.add_neigh(neg_neigh, seg)
 
     for tan in tans:
-        if tan.start_pos == start_pos:
+        if tan.start_pos.is_equal(start_pos):
             seg = LineSegment(start_pos, tan.end_pos)
             pneigh = node_map.get((tan.end_pos, 1))
             nneigh = node_map.get((tan.end_pos, -1))
@@ -279,7 +305,7 @@ def build_graph(tans, start_pos, start_circles, settings):
                 pos_node.add_neigh(nneigh, seg)
                 neg_node.add_neigh(nneigh, seg)
 
-        elif tan.end_pos == start_pos:
+        elif tan.end_pos.is_equal(start_pos):
             seg = LineSegment(start_pos, tan.start_pos)
             pneigh = node_map.get((tan.start_pos, 1))
             nneigh = node_map.get((tan.start_pos, -1))
@@ -300,18 +326,21 @@ def neighbours_on_circle(points, circle, pos):
     max_pt = None
     min_pt = None
 
+    if pos.is_equal(circle.pos):
+        return (pos, pos)
+
     vec1 = pos - circle.pos
 
     # pos is only a neighbour if it appears more than once in points list
     self_count = 0
     for point in points:
-        if point == pos:
+        if point.is_equal(pos):
             self_count += 1
     self_ignore = self_count <= 1
 
     for point in points:
 
-        if point == pos and self_ignore:
+        if point.is_equal(pos) and self_ignore:
             continue
 
         angle = vec1.oriented_angle(point - circle.pos)
@@ -344,7 +373,7 @@ def a_star(start_nodes, end_pos):
         current = queue.popitem()[0]
         visited.add(current)
 
-        if current.pos == end_pos:
+        if current.pos.is_equal(end_pos):
             res = []
             curr = current
             parent = parents.get(curr)
@@ -374,138 +403,46 @@ def a_star(start_nodes, end_pos):
     return []
 
 def discretize_trajectory(segments, v_start, v_end, settings):
-    "discretize trajectory formed by segments"
-
-    traj_length = 0
+    "discretize trajectory using 1D ramps in pickit"
+    path_length = 0
     for seg in segments:
-        traj_length = traj_length + seg.length()
+        path_length += seg.length()
 
-    acc_until_dist = 0
-    decc_from_dist = 0
+    seg_iter = iter(segments)
 
-    t_adj = abs(v_start - v_end)/settings.max_acc
-    d_adj = min(v_start, v_end)*t_adj + 0.5 * settings.max_acc * t_adj * t_adj
+    gen_traj = discretize_general_trajectory(v_start, v_end, path_length, settings)
 
-    t_acc = (settings.max_v - v_start)/settings.max_acc
-    d_acc = v_start * t_acc + 0.5 * settings.max_acc * t_acc * t_acc
-
-    t_dec = (settings.max_v - v_end)/settings.max_acc
-    d_decc = v_end * t_dec + 0.5 * settings.max_acc * t_dec * t_dec
-
-    if d_adj > traj_length:
-        if v_start < v_end:
-            acc_until_dist = traj_length
-            decc_from_dist = traj_length + 1
-            # Cannot accelerate to end-velocity"
-        else:
-            acc_until_dist = 0
-            decc_from_dist = traj_length
-            # Cannot decelerate to end-velocity
-    elif t_acc + t_dec > traj_length:
-        d_tmp = (traj_length - d_adj)/2
-        acc_until_dist = d_tmp
-        decc_from_dist = d_tmp
-    else:
-        acc_until_dist = d_acc
-        decc_from_dist = traj_length - d_decc
-
-    current_d = 0
-    current_t = 0
-    current_v = v_start
+    current_seg = next(seg_iter)
+    acc_length = 0.0
     res = []
-    for seg in segments:
-        res = res + discretize_segment(seg,
-                                       current_d,
-                                       current_t,
-                                       current_v,
-                                       acc_until_dist,
-                                       decc_from_dist,
-                                       settings)
-        (_, speed, _, time_stamp) = res[-1]
-        current_d = current_d + seg.length()
-        current_t = time_stamp
-        current_v = speed.length()
+    for (time, pos, vel, acc) in gen_traj:
+        if pos > acc_length + current_seg.length():
+            acc_length = acc_length + current_seg.length()
+            current_seg = next(seg_iter)
+
+        dist_on_seg = pos - acc_length
+
+        pos_vec = current_seg.next_pos(current_seg.start, dist_on_seg)
+        vel_vec = current_seg.tan(pos_vec) * vel
+        acc_vec = current_seg.tan(pos_vec) * acc
+        acc_vec = acc_vec + current_seg.radial_acc(pos_vec, vel)
+
+        res.append((pos_vec, vel_vec, acc_vec, time))
 
     return res
 
-def discretize_segment(segment,
-                       d_travelled,
-                       time_stamp,
-                       v_init,
-                       acc_until,
-                       dec_from,
-                       settings):
-    "discretize a segment"
+def discretize_general_trajectory(v_start, v_end, path_length, settings):
+    "wrap and abuse pickit 1D ramp generation"
+    joint = Joint('traj', JointMinMaxConstraint(pos_min=-1e6,
+                                                pos_max=1e6,
+                                                vel_min = - settings.max_v,
+                                                vel_max = settings.max_v,
+                                                acc_min = -settings.max_acc,
+                                                acc_max = settings.max_acc))
 
-    current_pos = segment.start
-    current_v = v_init
-    current_speed_vector = segment.tan(segment.start) * v_init
-    current_time_stamp = time_stamp
-    current_d_travelled = d_travelled
-    d_remaining = segment.length()
+    time_to_dest = joint.time_to_destination(0, v_start, path_length, v_end)
 
-    if current_d_travelled < acc_until:
-        current_acc = settings.max_acc
-    elif current_d_travelled > dec_from:
-        current_d_travelled = -settings.max_acc
-    else:
-        current_acc = 0
-        
-    current_acc_vector = segment.tan(current_pos) * current_acc
-    current_acc_vector = current_acc_vector + \
-                         segment.radial_acc(current_pos, current_v)
-
-    res = []
-
-    res.append((current_pos,
-                current_speed_vector,
-                current_acc_vector,
-                current_time_stamp))
-
-    delta_t = settings.time_resolution
-
-    while d_remaining > 0:
-
-        delta_dist = (current_v * delta_t)
-
-        if delta_dist > d_remaining:
-            delta_t = d_remaining / current_v
-            delta_dist = d_remaining
-        else:
-            delta_t = settings.time_resolution
-
-        current_pos = segment.next_pos(current_pos, delta_dist)
-        current_d_travelled = current_d_travelled + delta_dist
-
-        if current_d_travelled < acc_until:
-            current_v = current_v + settings.max_acc * delta_t
-            current_acc = settings.max_acc
-        elif current_d_travelled < dec_from:
-            current_v = settings.max_v
-            current_acc = 0
-        else:
-            current_v = current_v - settings.max_acc * delta_t
-            current_acc = - settings.max_acc
-            if current_v < 0:
-                return res
-
-        current_speed_vector = segment.tan(current_pos) * current_v
-
-        current_acc_vector = segment.tan(current_pos) * current_acc
-        current_acc_vector = current_acc_vector + \
-                             segment.radial_acc(current_pos, current_v)
-
-        current_time_stamp = current_time_stamp + delta_t
-
-        d_remaining = d_remaining - delta_dist
-
-        res.append((current_pos,
-                    current_speed_vector,
-                    current_acc_vector,
-                    current_time_stamp))
-
-    return res
-
+    return joint.get_path(0, v_start, path_length, v_end, time_to_dest.tf, settings.time_resolution)
 
 class Node(object):
     "node of waypoint graph"
